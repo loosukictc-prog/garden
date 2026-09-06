@@ -16,8 +16,8 @@ export const metadata: Metadata = {
     "Photoshoot venue Nanyuki",
   ],
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: "/garden/logo.png",
+    apple: "/garden/logo.png",
   },
   openGraph: {
     title: "Berakhah Gardens Nanyuki",
@@ -34,8 +34,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="h-full scroll-smooth">
-      <body className="min-h-full bg-[#FAF8F3] text-[#1F2937] antialiased">
+    <html lang="en" className="h-full w-full scroll-smooth">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body className="w-full min-h-screen bg-[#FAF8F3] text-[#1F2937] antialiased overflow-x-hidden">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

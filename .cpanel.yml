@@ -1,0 +1,61 @@
+---
+deployment:
+  targets:
+    - target: "production"
+      paths:
+        - "public_html/"
+      document_root: "/"
+      url: "https://berakhahgardens.co.ke"
+      symlink: false
+
+      post_deployment_actions:
+        - type: exec
+          command: "cd ~/public_html && npm install --production"
+        
+        - type: exec
+          command: "cd ~/public_html && npm run build"
+        
+        - type: restart_node_js
+          
+        - type: exec
+          command: "cd ~/public_html && pm2 restart berakhah-gardens 2>/dev/null || true"
+
+hooks:
+  pre_deployment:
+    - action: exec
+      script: |
+        #!/bin/bash
+        echo "Starting pre-deployment checks..."
+        
+        # Backup current version
+        if [ -d ~/public_html/.next ]; then
+          cp -r ~/public_html/.next ~/public_html/.next.backup || true
+        fi
+        
+        # Check Node.js version
+        node_version=$(node -v)
+        echo "Using Node.js: $node_version"
+        
+  post_deployment:
+    - action: exec
+      script: |
+        #!/bin/bash
+        echo "Starting post-deployment tasks..."
+        
+        # Clear any old backups
+        find ~/public_html -maxdepth 1 -name ".next.backup*" -mtime +7 -exec rm -rf {} \;
+        
+        # Verify application is running
+        if curl -s http://127.0.0.1:$(cat ~/public_html/.port 2>/dev/null || echo "3000")/api/health > /dev/null; then
+          echo "✓ Application health check passed"
+        else
+          echo "⚠️  Application health check failed - reviewing logs..."
+          tail -n 20 ~/public_html/logs/error.log
+        fi
+        
+        # Display deployment summary
+        echo ""
+        echo "╔════════════════════════════════════════════════════════╗"
+        echo "║           Deployment Complete                          ║"
+        echo "╚════════════════════════════════════════════════════════╝"
+        echo ""

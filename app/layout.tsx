@@ -16,8 +16,8 @@ export const metadata: Metadata = {
     "Photoshoot venue Nanyuki",
   ],
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: "/garden/logo.png",
+    apple: "/garden/logo.png",
   },
   openGraph: {
     title: "Berakhah Gardens Nanyuki",

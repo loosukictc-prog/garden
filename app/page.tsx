@@ -217,6 +217,25 @@ export default function Home() {
   const [bookingRef,      setBookingRef]      = useState("");
   const [isSubmitted,     setIsSubmitted]     = useState(false);
 
+  /* Calendar — 0 = current month, 1 = next month */
+  const [calendarOffset, setCalendarOffset] = useState(0);
+  const today = useMemo(() => new Date(), []);
+  const calendarDate = useMemo(() => {
+    const d = new Date(today.getFullYear(), today.getMonth() + calendarOffset, 1);
+    return d;
+  }, [today, calendarOffset]);
+  const calendarYear  = calendarDate.getFullYear();
+  const calendarMonth = calendarDate.getMonth();
+  const calendarDaysInMonth = useMemo(
+    () => new Date(calendarYear, calendarMonth + 1, 0).getDate(),
+    [calendarYear, calendarMonth],
+  );
+  /* Monday-based offset: how many empty cells before the 1st */
+  const calendarStartOffset = useMemo(() => {
+    const jsDay = new Date(calendarYear, calendarMonth, 1).getDay(); // 0=Sun
+    return jsDay === 0 ? 6 : jsDay - 1; // convert to Mon=0
+  }, [calendarYear, calendarMonth]);
+
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(galleryItems.map((i) => i.category)))],
     [],
@@ -813,31 +832,103 @@ export default function Home() {
             </motion.div>
             <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={VP}
               className="rounded-[24px] border border-[#E5E7EB] bg-white p-4 shadow-[0_16px_32px_rgba(17,24,39,0.04)] sm:rounded-[28px] sm:p-6">
+
+              {/* Month navigation — only current and next month allowed */}
+              <div className="mb-5 flex items-center justify-between sm:mb-6">
+                <button
+                  type="button"
+                  aria-label="Previous month"
+                  disabled={calendarOffset === 0}
+                  onClick={() => setCalendarOffset(0)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#FAF8F3] text-[#1F2937] transition-all hover:border-[#C7DCCB] disabled:cursor-not-allowed disabled:opacity-30 sm:h-10 sm:w-10"
+                >
+                  <ChevronRight size={16} className="rotate-180" />
+                </button>
+                <div className="text-center">
+                  <p className="text-base font-semibold text-[#1F2937] sm:text-lg">
+                    {new Date(calendarYear, calendarMonth).toLocaleString("default", { month: "long", year: "numeric" })}
+                  </p>
+                  <div className="mt-1.5 flex justify-center gap-2">
+                    {[0, 1].map((offset) => (
+                      <button
+                        key={offset}
+                        type="button"
+                        onClick={() => setCalendarOffset(offset)}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${calendarOffset === offset ? "w-6 bg-[#1F5E3B]" : "w-1.5 bg-[#D1D5DB] hover:bg-[#A7C4AE]"}`}
+                        aria-label={offset === 0 ? "Current month" : "Next month"}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  aria-label="Next month"
+                  disabled={calendarOffset === 1}
+                  onClick={() => setCalendarOffset(1)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#FAF8F3] text-[#1F2937] transition-all hover:border-[#C7DCCB] disabled:cursor-not-allowed disabled:opacity-30 sm:h-10 sm:w-10"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+
               {/* Day headers */}
-              <div className="grid grid-cols-7 gap-1.5 sm:gap-3">
+              <div className="grid grid-cols-7 gap-1 sm:gap-2">
                 {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d) => (
                   <div key={d} className="pb-2 text-center text-[9px] font-medium uppercase tracking-[0.18em] text-[#6B7280] sm:text-xs sm:tracking-[0.22em]">{d}</div>
                 ))}
               </div>
-              {/* Date cells */}
-              <div className="grid grid-cols-7 gap-1.5 sm:gap-3">
-                {Array.from({ length: 35 }, (_, i) => {
-                  const statuses = ["available","pending","unavailable"] as const;
-                  const status = statuses[i % 3];
+
+              {/* Date cells — correctly offset by weekday */}
+              <div className="grid grid-cols-7 gap-1 sm:gap-2">
+                {/* Empty cells before the 1st of the month */}
+                {Array.from({ length: calendarStartOffset }).map((_, i) => (
+                  <div key={`empty-${i}`} />
+                ))}
+                {/* Day cells */}
+                {Array.from({ length: calendarDaysInMonth }, (_, i) => {
+                  const day = i + 1;
+                  const isToday = calendarOffset === 0 && day === today.getDate();
+                  /* Simple demo pattern: past days = unavailable, today = available,
+                     future days alternate available / pending */
+                  let status: "available" | "pending" | "unavailable";
+                  if (calendarOffset === 0 && day < today.getDate()) {
+                    status = "unavailable";
+                  } else if ((day % 5 === 0) || (day % 7 === 0)) {
+                    status = "pending";
+                  } else {
+                    status = "available";
+                  }
                   return (
-                    <div key={i+1} className={`flex h-10 items-center justify-center rounded-xl border text-xs font-medium sm:h-14 sm:rounded-2xl sm:text-sm ${
-                      status === "available"   ? "border-[#C7DCCB] bg-[#EAF3EE] text-[#1F5E3B]" :
-                      status === "pending"     ? "border-[#E8D9A1] bg-[#F8F1DE] text-[#8A6B17]" :
-                                                 "border-[#E5E7EB] bg-[#F9FAFB] text-[#9CA3AF]"}`}>
-                      {i + 1}
+                    <div
+                      key={day}
+                      className={`relative flex h-9 items-center justify-center rounded-xl border text-xs font-medium transition-all duration-200 sm:h-12 sm:rounded-2xl sm:text-sm ${
+                        status === "available"
+                          ? "border-[#C7DCCB] bg-[#EAF3EE] text-[#1F5E3B]"
+                          : status === "pending"
+                          ? "border-[#E8D9A1] bg-[#F8F1DE] text-[#8A6B17]"
+                          : "border-[#E5E7EB] bg-[#F9FAFB] text-[#9CA3AF]"
+                      } ${isToday ? "ring-2 ring-[#1F5E3B] ring-offset-1" : ""}`}
+                    >
+                      {day}
+                      {isToday && (
+                        <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#1F5E3B] sm:h-2.5 sm:w-2.5" />
+                      )}
                     </div>
                   );
                 })}
               </div>
+
               <div className="mt-5 flex flex-wrap gap-3 text-xs text-[#4B5563] sm:mt-6 sm:gap-4 sm:text-sm">
                 {[["#EAF3EE","Available"],["#F8F1DE","Pending"],["#F3F4F6","Unavailable"]].map(([color,label]) => (
-                  <div key={label} className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full sm:h-3 sm:w-3" style={{ background: color }} />{label}</div>
+                  <div key={label} className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full sm:h-3 sm:w-3" style={{ background: color }} />
+                    {label}
+                  </div>
                 ))}
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full ring-2 ring-[#1F5E3B] sm:h-3 sm:w-3" />
+                  Today
+                </div>
               </div>
             </motion.div>
           </div>

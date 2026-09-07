@@ -3,9 +3,10 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  ArrowRight, CalendarDays, Camera, Car, Check, ChevronRight,
-  Clock, Heart, Leaf, Mail, MapPin, Menu, MessageCircle,
-  Phone, Plus, ShieldCheck, Sparkles, Star, Tent, TreePine, Users, X,
+  ArrowRight, CalendarDays, Car, Check, ChevronRight,
+  Clock, Flower2, Gamepad2, Heart, Leaf, Mail, MapPin, Menu,
+  MessageCircle, Phone, Plus, ShieldCheck, Sparkles, Star,
+  Tent, Ticket, TreePine, UtensilsCrossed, Users, Wine, X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,13 +39,13 @@ const navItems = [
 
 /* ─── What's Included ───────────────────────────────────────────────────────── */
 const included = [
-  { emoji: "🍽️", title: "Full Course Meal",    desc: "Delicious 3-course meal crafted with love for two." },
-  { emoji: "⛺",  title: "Beautiful Setup",     desc: "Romantic picnic setup designed exclusively for you." },
-  { emoji: "🎟️", title: "Entry Fee",           desc: "Full venue access included in your package." },
-  { emoji: "🎮",  title: "Fun Games",           desc: "Exciting games to bond and create lasting memories." },
-  { emoji: "💐",  title: "Fresh Flowers",       desc: "A lovely bouquet to make the moment truly special." },
-  { emoji: "🍫",  title: "Chocolates",          desc: "Sweet treats for the sweetest hearts." },
-  { emoji: "🥂",  title: "Drinks",              desc: "Refreshing drinks to toast your love together." },
+  { icon: UtensilsCrossed, title: "Full Course Meal",  desc: "Delicious 3-course meal crafted with love for two.",           color: "#6b1a2a" },
+  { icon: Heart,           title: "Beautiful Setup",   desc: "Romantic picnic setup designed exclusively for you.",          color: "#c4607a" },
+  { icon: Ticket,          title: "Entry Fee",         desc: "Full venue access included in your package.",                  color: "#b8972a" },
+  { icon: Gamepad2,        title: "Fun Games",         desc: "Exciting games to bond and create lasting memories.",          color: "#2d5a3d" },
+  { icon: Flower2,         title: "Fresh Flowers",     desc: "A lovely bouquet to make the moment truly special.",           color: "#c4607a" },
+  { icon: Sparkles,        title: "Chocolates",        desc: "Sweet treats for the sweetest hearts.",                        color: "#b8972a" },
+  { icon: Wine,            title: "Drinks",            desc: "Refreshing drinks to toast your love together.",               color: "#6b1a2a" },
 ];
 
 /* ─── Experience journey ────────────────────────────────────────────────────── */
@@ -353,8 +354,10 @@ export default function Home() {
               <div className="relative w-full max-w-sm overflow-visible">
                 <div className="overflow-hidden rounded-[28px] border border-white/20 bg-white/8 p-2.5 shadow-[0_32px_80px_rgba(0,0,0,0.32)] backdrop-blur-sm">
                   <div className="overflow-hidden rounded-[22px]">
-                    <Image src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=900&q=80"
-                      alt="Romantic outdoor picnic setup" width={900} height={1200} className="h-[520px] w-full object-cover transition-transform duration-700 hover:scale-105" />
+                    <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.65, ease: E }}>
+                      <Image src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=900&q=80"
+                        alt="Romantic outdoor picnic setup" width={900} height={1200} className="h-[520px] w-full object-cover" />
+                    </motion.div>
                   </div>
                 </div>
                 {/* Floating label */}
@@ -418,10 +421,15 @@ export default function Home() {
             {/* Cards grid — 1 col mobile, 2 tablet, 3-4 desktop */}
             <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={VP}
               className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
-              {included.map(({ emoji, title, desc }) => (
-                <motion.div key={title} variants={cardUp} className="included-card">
-                  <span className="included-icon">{emoji}</span>
-                  <h3 className="font-display text-xl font-semibold text-[#1a1014] sm:text-2xl">{title}</h3>
+              {included.map(({ icon: Icon, color, title, desc }) => (
+                <motion.div key={title} variants={cardUp}
+                  whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.3, ease: E } }}
+                  className="included-card">
+                  {/* CSS-styled icon tile — no emoji */}
+                  <div className="included-icon-tile" style={{ background: `${color}14`, borderColor: `${color}28` }}>
+                    <Icon size={26} style={{ color }} strokeWidth={1.75} />
+                  </div>
+                  <h3 className="mt-5 font-display text-xl font-semibold text-[#1a1014] sm:text-2xl">{title}</h3>
                   <p className="mt-2 text-sm leading-7 text-[#7a5c65] sm:text-base">{desc}</p>
                 </motion.div>
               ))}
@@ -461,14 +469,18 @@ export default function Home() {
 
                   {/* Image side */}
                   <div className={i % 2 === 0 ? "lg:order-1" : "lg:order-2"}>
-                    <div className="relative overflow-hidden rounded-[24px] shadow-[0_20px_50px_rgba(107,26,42,0.12)] sm:rounded-[28px]">
-                      <Image src={image} alt={title} width={900} height={600}
-                        className="h-[280px] w-full object-cover transition-transform duration-700 hover:scale-105 sm:h-[380px] lg:h-[440px]" />
+                    <motion.div
+                      whileHover={{ scale: 1.02, transition: { duration: 0.4, ease: E } }}
+                      className="relative overflow-hidden rounded-[24px] shadow-[0_20px_50px_rgba(107,26,42,0.12)] sm:rounded-[28px]">
+                      <motion.div whileHover={{ scale: 1.06 }} transition={{ duration: 0.6, ease: E }}>
+                        <Image src={image} alt={title} width={900} height={600}
+                          className="h-[280px] w-full object-cover sm:h-[380px] lg:h-[440px]" />
+                      </motion.div>
                       {/* Step badge */}
                       <div className="absolute left-5 top-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#6b1a2a] text-white shadow-lg">
                         <span className="font-display text-sm font-bold">{step}</span>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
 
                   {/* Text side */}
@@ -497,16 +509,20 @@ export default function Home() {
 
               {/* Image */}
               <motion.div variants={slideL} initial="hidden" whileInView="visible" viewport={VP}>
-                <div className="relative overflow-hidden rounded-[24px] shadow-[0_24px_64px_rgba(107,26,42,0.1)] sm:rounded-[28px]">
-                  <Image src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80"
-                    alt="Berakhah Gardens landscape" width={1200} height={1400}
-                    className="h-[380px] w-full object-cover transition-transform duration-700 hover:scale-105 sm:h-[500px] lg:h-[580px]" />
+                <motion.div
+                  whileHover={{ scale: 1.02, transition: { duration: 0.4, ease: E } }}
+                  className="relative overflow-hidden rounded-[24px] shadow-[0_24px_64px_rgba(107,26,42,0.1)] sm:rounded-[28px]">
+                  <motion.div whileHover={{ scale: 1.06 }} transition={{ duration: 0.65, ease: E }}>
+                    <Image src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80"
+                      alt="Berakhah Gardens landscape" width={1200} height={1400}
+                      className="h-[380px] w-full object-cover sm:h-[500px] lg:h-[580px]" />
+                  </motion.div>
                   {/* Overlay badge */}
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1a0810]/70 to-transparent p-6 sm:p-8">
                     <p className="font-serif text-lg italic text-white/90">Nanyuki&apos;s most romantic outdoor venue</p>
                     <p className="mt-1 font-display text-3xl text-white sm:text-4xl">Berakhah Gardens</p>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
 
               {/* Text + stats */}
@@ -527,6 +543,7 @@ export default function Home() {
                   className="mt-8 grid grid-cols-2 gap-4">
                   {statCards.map(({ value, label, icon: Icon }) => (
                     <motion.div key={label} variants={cardUp}
+                      whileHover={{ y: -5, scale: 1.03, transition: { duration: 0.28, ease: E } }}
                       className="glass-card rounded-[20px] p-4 sm:rounded-[22px] sm:p-5">
                       <div className="icon-tile h-10 w-10 rounded-xl sm:h-11 sm:w-11 sm:rounded-2xl">
                         <Icon size={18} />
@@ -567,7 +584,9 @@ export default function Home() {
             <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={VP}
               className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
               {features.map(({ icon: Icon, title, desc }) => (
-                <motion.div key={title} variants={cardUp} className="feature-card">
+                <motion.div key={title} variants={cardUp}
+                  whileHover={{ y: -6, scale: 1.015, transition: { duration: 0.3, ease: E } }}
+                  className="feature-card">
                   <div className="feature-card-icon"><Icon size={24} /></div>
                   <h3 className="mt-5 font-display text-xl text-[#1a1014] sm:text-2xl">{title}</h3>
                   <p className="mt-3 text-sm leading-7 text-[#7a5c65] sm:text-base">{desc}</p>
@@ -615,13 +634,16 @@ export default function Home() {
                     key={`${item.src}-${idx}`}
                     initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.92 }} transition={{ duration: 0.3, ease: E }}
+                    whileHover={{ y: -4, scale: 1.01, transition: { duration: 0.32, ease: E } }}
                     type="button" aria-label={`View: ${item.alt}`}
-                    className="group mb-4 block w-full overflow-hidden rounded-[20px] shadow-[0_6px_18px_rgba(107,26,42,0.08)] transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(107,26,42,0.14)] sm:mb-5 sm:rounded-[24px]"
+                    className="mb-4 block w-full overflow-hidden rounded-[20px] shadow-[0_6px_18px_rgba(107,26,42,0.08)] will-change-transform hover:shadow-[0_18px_40px_rgba(107,26,42,0.16)] sm:mb-5 sm:rounded-[24px]"
                     onClick={() => setSelectedImage(idx)}>
                     <div className="overflow-hidden rounded-[20px] sm:rounded-[24px]">
-                      <Image src={item.src} alt={item.alt} width={900}
-                        height={item.aspect === "portrait" ? 1200 : 700}
-                        className="w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <motion.div whileHover={{ scale: 1.07 }} transition={{ duration: 0.65, ease: E }}>
+                        <Image src={item.src} alt={item.alt} width={900}
+                          height={item.aspect === "portrait" ? 1200 : 700}
+                          className="w-full object-cover" />
+                      </motion.div>
                     </div>
                   </motion.button>
                 ))}

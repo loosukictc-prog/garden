@@ -3,33 +3,32 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://berakhahgardens.co.ke"),
-  title: "Berakhah Gardens Nanyuki | A Hidden Gem for Every Celebration",
+  title: "Berakhah Gardens Nanyuki | Couples Picnic Date – KES 5,500",
   description:
-    "Premium garden venue in Nanyuki for birthdays, meetings, picnics, camping, photoshoots, and private outdoor events.",
+    "Book the ultimate Couples Picnic Date at Berakhah Gardens Nanyuki for KES 5,500. Includes 3-course meal, romantic setup, flowers, chocolates, games & drinks. Perfect date. Perfect you.",
   keywords: [
+    "Couples picnic Nanyuki",
+    "Romantic picnic Kenya",
     "Berakhah Gardens Nanyuki",
-    "Garden venue in Nanyuki",
+    "Date ideas Nanyuki",
+    "Garden venue Nanyuki",
+    "Picnic date KES 5500",
     "Birthday venue Nanyuki",
-    "Meeting venue Nanyuki",
-    "Picnic venue Nanyuki",
-    "Camping venue Nanyuki",
-    "Photoshoot venue Nanyuki",
+    "Outdoor event Nanyuki",
   ],
   icons: {
     icon: "/garden/logo.png",
     apple: "/garden/logo.png",
   },
   openGraph: {
-    title: "Berakhah Gardens Nanyuki",
-    description: "A Hidden Gem for Every Celebration.",
+    title: "Berakhah Gardens – Couples Picnic Date",
+    description: "The perfect romantic picnic date in Nanyuki. KES 5,500 per couple. Book now.",
     url: "https://berakhahgardens.co.ke",
     type: "website",
     locale: "en_KE",
     siteName: "Berakhah Gardens Nanyuki",
   },
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -39,7 +38,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className="w-full min-h-screen bg-[#FAF8F3] text-[#1F2937] antialiased overflow-x-hidden">
+      {/*
+        body: NO min-h-screen, NO h-full — those fight the scroll fix.
+        Body must size naturally to content. min-height is set in globals.css only.
+      */}
+      <body className="w-full antialiased overflow-x-hidden bg-[#fdf8f0] text-[#1a1014]">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -47,11 +50,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
               name: "Berakhah Gardens Nanyuki",
-              description:
-                "Outdoor garden venue in Nanyuki for birthdays, meetings, picnics, camping, photoshoots, and private celebrations.",
+              description: "Romantic outdoor garden venue offering Couples Picnic Dates, birthdays, meetings, photoshoots and more in Nanyuki.",
               url: "https://berakhahgardens.co.ke",
               telephone: "+254757692495",
               email: "hello@berakhahgardens.co.ke",
+              priceRange: "KES 5,500–KSh 24,000",
               address: {
                 "@type": "PostalAddress",
                 addressLocality: "Nanyuki",
@@ -59,7 +62,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 addressCountry: "KE",
               },
               openingHours: "Mo-Su 08:00-20:00",
-              priceRange: "KSh 10,000-KSh 30,000",
               areaServed: "Nanyuki",
             }),
           }}
